@@ -4,7 +4,8 @@
 #include <cstdio>
 #include <vector>
 
-#define maxN 50001
+#define maxN 100001
+typedef unsigned long long ull;
 
 using namespace std;
  
@@ -15,7 +16,7 @@ int n;
 void emergeForSort(int l,int m,int r);
 void emergeSort1(int l,int r);
 
-
+//归并排序递归形式 
 void emergeSort1(int l,int r){
 	if(l==r) return;
 	else{
@@ -25,6 +26,7 @@ void emergeSort1(int l,int r){
 		emergeForSort(l,m,r);
 	}
 }
+//合并有序表 
 void emergeForSort(int l,int m,int r){
 	int i,j,t;
 	for(i=l,j=m+1,t=i;i<=m&&j<=r;){
@@ -37,6 +39,7 @@ void emergeForSort(int l,int m,int r){
 	arr[t]=help[t];
 	//printf("t: %d help[t]: %d\n",t,help[t]);
 }
+//归并排序非递归形式 
 }
 void emergeSort2(int l,int r){
 	for(int d=1;d<=n;d*=2){
@@ -49,6 +52,48 @@ void emergeSort2(int l,int r){
 	}
 	}
 }
+//小和问题
+long long emergeForF1(int l,int m,int r){
+	int i=l,j=m+1;
+	long long sum=0;
+	long long ans=0;
+	for(;j<=r;j++){
+		while(arr[i]<=arr[j]&&i<=m) sum+=arr[i++];
+		ans+=sum;
+	}
+	emergeForSort(l,m,r);
+	return ans;
+}
+long long f1(int l,int r){
+	if(l==r) return 0;
+	int m=l+(r-l)/2;
+	long long ans=0;
+	ans=f1(l,m)+f1(m+1,r)+emergeForF1(l,m,r);
+	return ans;
+} 
+//翻转对问题 
+ull emergeForF2(int l,int m,int r){
+	int i=l;
+	int j=m+1;
+	ull sum=0;
+	ull ans=0;
+	for(;i<=m;i++){
+		while(arr[i]>2*arr[j]&&j<=r){
+		sum++;
+		j++;
+	}
+		ans+=sum;
+	}
+	emergeForSort(l,m,r);
+	return ans;
+}
+ull f2(int l,int r){
+	if(l==r) return 0;
+	int m=l+(r-l)/2;
+	ull ans=0;
+	ans=f2(l,m)+f2(m+1,r)+emergeForF2(l,m,r);
+	return ans;
+}
 int main(){
 	arr.reserve(maxN);
 	help.reserve(maxN);
@@ -60,6 +105,7 @@ int main(){
 		scanf("%d",&m);
 		arr.push_back(m);
 	}
+	printf("%llu\n",f2(0,n-1));
 	emergeSort2(0,n-1);
 	printf("排序结果如下：\n");
 	for(int i=0;i<n;i++){
